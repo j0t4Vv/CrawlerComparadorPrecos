@@ -1,6 +1,3 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -19,18 +16,16 @@ namespace Crawler.Utils
         static List<Produto> produtosVerificados = new List<Produto>();
 
         // Método para verificar novos produtos
-        public static async void VerificarNovoProduto(object state)
+        public static async void VerificarNovoProduto(object emailDestinoObj)
         {
+            string emailDestino = emailDestinoObj as string; // Converte o objeto para string
+
             string username = "11164448";
             string senha = "60-dayfreetrial";
             string url = "http://regymatrix-001-site1.ktempurl.com/api/v1/produto/getall";
 
             try
             {
-                // Obter o endereço de e-mail do usuário
-                Console.WriteLine("Por favor, insira seu endereço de e-mail para receber as informações:");
-                string emailDestino = Console.ReadLine();
-
                 // Criar um objeto HttpClient
                 using (HttpClient client = new HttpClient())
                 {
