@@ -1,60 +1,57 @@
 using Crawler.Scraps;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
+using HtmlAgilityPack;
 using System;
 using Crawler.Data;
 using Crawler.Models;
 using Crawler.Utils;
-
-public class MagazineLuizaScraper
+public class MercadoLivreScraper
 {
     public ProdutoScraper ObterPreco(string descricaoProduto, int idProduto)
     {
+        // URL da pesquisa no Mercado Livre com base na descrição do produto
+        string url = $"https://lista.mercadolivre.com.br/{descricaoProduto}";
+
         try
         {
-            // Inicializa o ChromeDriver
-            using (IWebDriver driver = new ChromeDriver())
+            // Inicializa o HtmlWeb do HtmlAgilityPack
+            HtmlWeb web = new HtmlWeb();
+
+            // Carrega a página de pesquisa do Mercado Livre
+            HtmlDocument document = web.Load(url);
+
+            // Encontra o elemento que contém o preço do primeiro produto            
+            HtmlNode firstProductPriceNode = document.DocumentNode.SelectSingleNode("//span[@class='andes-money-amount__fraction']");
+            HtmlNode firstProductTitleNode = document.DocumentNode.SelectSingleNode("//h2[@class='ui-search-item__title']");
+            HtmlNode firstProductUrlNode = document.DocumentNode.SelectSingleNode("//a[contains(@class, 'ui-search-link__title-card')]");
+
+            // Verifica se o elemento foi encontrado
+            if (firstProductPriceNode != null)
             {
-                // Abre a página
-                driver.Navigate().GoToUrl($"https://www.magazineluiza.com.br/busca/{descricaoProduto}");
+                // Obtém o preço do primeiro produto
+                ProdutoScraper produto = new ProdutoScraper();
+                string firstProductPrice = firstProductPriceNode.InnerText.Trim();
+                string firstProductName = firstProductTitleNode.InnerText.Trim();
+                string firstProductUrl = firstProductUrlNode.GetAttributeValue("href", "");
 
-                // Aguarda um tempo fixo para permitir que a página seja carregada (você pode ajustar conforme necessário)
-                System.Threading.Thread.Sleep(5000);
 
-                // Encontra o elemento que possui o atributo data-testid
+                // Registra o log com o ID do produto
+                RegistroLog.RegistrarLog("8538", "JoãoVictor", DateTime.Now, "WebScraping - Mercado Livre", "Sucesso", idProduto);
 
-                IWebElement priceElement = driver.FindElement(By.CssSelector("[data-testid='price-value']"));
-                IWebElement titleElement = driver.FindElement(By.CssSelector("[data-testid='product-title']"));
-                IWebElement urlElement = driver.FindElement(By.CssSelector("[data-testid='product-card-container']"));
+                produto.Price = firstProductPrice;
+                produto.Name = firstProductName;
+                produto.Url = firstProductUrl;
 
-                // Verifica se o elemento foi encontrado
-                if (priceElement != null)
-                {
-                    // Obtém o preço do primeiro produto
-                    ProdutoScraper produto = new ProdutoScraper();
-                    string firstProductPrice = priceElement.Text.Trim();
-                    string firstProductName = titleElement.Text.Trim();
-                    string firstProductUrl = urlElement.GetAttribute("href");
+                // Retorna o preço
+                return produto;
+            }
+            else
+            {
+                Console.WriteLine("Preço não encontrado.");
 
-                    // Registra o log com o ID do produto
-                    RegistroLog.RegistrarLog("8538", "JoãoVictor", DateTime.Now, "WebScraping - Magazine Luiza", "Sucesso", idProduto);
+                // Registra o log com o ID do produto
+                RegistroLog.RegistrarLog("8538", "JoãoVictor", DateTime.Now, "WebScraping - Mercado Livre", "Preço não encontrado", idProduto);
 
-                    produto.Price = firstProductPrice;
-                    produto.Name = firstProductName;
-                    produto.Url = firstProductUrl;
-
-                    // Retorna o preço
-                    return produto;
-                }
-                else
-                {
-                    Console.WriteLine("Preço não encontrado.");
-
-                    // Registra o log com o ID do produto
-                    RegistroLog.RegistrarLog("8538", "JoãoVictor", DateTime.Now, "WebScraping - Magazine Luiza", "Preço não encontrado", idProduto);
-
-                    return null;
-                }
+                return null;
             }
         }
         catch (Exception ex)
@@ -62,7 +59,7 @@ public class MagazineLuizaScraper
             Console.WriteLine($"Erro ao acessar a página: {ex.Message}");
 
             // Registra o log com o ID do produto
-            RegistroLog.RegistrarLog("0000088538", "JoãoVictor", DateTime.Now, "Web Scraping - Magazine Luiza", $"Erro: {ex.Message}", idProduto);
+            RegistroLog.RegistrarLog("8538", "JoãoVictor", DateTime.Now, "Web Scraping - Mercado Livre", $"Erro: {ex.Message}", idProduto);
 
             return null;
         }
