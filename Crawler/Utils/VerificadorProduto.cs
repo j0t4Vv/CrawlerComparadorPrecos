@@ -56,7 +56,7 @@ namespace Crawler.Utils
                                 // Registra um log no banco de dados apenas se o produto for novo
                                 if (!VerificadorRegistro.ProdutoJaRegistrado(produto.Id))
                                 {
-                                    RegistroLog.RegistrarLog("0000088538", "JoãoVictor", DateTime.Now, "ConsultaAPI - Verificar Produto", "Sucesso", produto.Id);
+                                    RegistroLog.RegistrarLog("8538", "JoãoVictor", DateTime.Now, "ConsultaAPI - Verificar Produto", "Sucesso", produto.Id);
 
                                     MercadoLivreScraper mercadoLivreScraper = new MercadoLivreScraper();
                                     var precoMercadoLivre = mercadoLivreScraper.ObterPreco(produto.Nome, produto.Id);
@@ -70,13 +70,13 @@ namespace Crawler.Utils
                                     benchmark.CompararPrecos(produto.Nome, precoMagazineLuiza, precoMercadoLivre, emailDestino);
 
                                     // Registrar log do benchmark
-                                    RegistroLog.RegistrarLog("0000088538", "JoãoVictor", DateTime.Now, "Benchmark - Comparar Preços", "Sucesso", produto.Id);
+                                    RegistroLog.RegistrarLog("8538", "JoãoVictor", DateTime.Now, "Benchmark - Comparar Preços", "Sucesso", produto.Id);
 
                                     //// Enviar e-mail com os resultados da comparação
                                     //Email.EnviarEmail(produto.Nome, precoMercadoLivre, produto.Nome, precoMagazineLuiza);
 
                                     // Registrar o envio do e-mail no log
-                                    RegistroLog.RegistrarLog("0000088538", "JoãoVictor", DateTime.Now, "EnvioEmail", "Sucesso", produto.Id);
+                                    RegistroLog.RegistrarLog("8538", "JoãoVictor", DateTime.Now, "EnvioEmail", "Sucesso", produto.Id);
                                 }
                             }
                         }
