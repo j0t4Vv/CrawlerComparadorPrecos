@@ -1,4 +1,7 @@
 using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -7,18 +10,20 @@ using System.Threading;
 using Newtonsoft.Json;
 using Crawler.Compare;
 using Crawler.Models;
+using Crawler.Send;
 
 namespace Crawler.Utils
 {
     public class VerificadorProduto
     {
+
         // Lista para armazenar produtos já verificados
         static List<Produto> produtosVerificados = new List<Produto>();
 
+
         // Método para verificar novos produtos
-        public static async void VerificarNovoProduto(object emailDestinoObj)
+        public static async void VerificarNovoProduto(object state)
         {
-            string emailDestino = emailDestinoObj as string; // Converte o objeto para string
 
             string username = "11164448";
             string senha = "60-dayfreetrial";
@@ -26,6 +31,7 @@ namespace Crawler.Utils
 
             try
             {
+
                 // Criar um objeto HttpClient
                 using (HttpClient client = new HttpClient())
                 {
@@ -63,6 +69,8 @@ namespace Crawler.Utils
 
                                     MagazineLuizaScraper magazineLuizaScraper = new MagazineLuizaScraper();
                                     var precoMagazineLuiza = magazineLuizaScraper.ObterPreco(produto.Nome, produto.Id);
+
+                                    string emailDestino = Email.SolicitarEmailDestino();
 
                                     Benchmark benchmark = new Benchmark();
 
