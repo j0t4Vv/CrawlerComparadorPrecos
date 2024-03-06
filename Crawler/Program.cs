@@ -18,9 +18,6 @@ class Program
     static void Main(string[] args)
     {
 
-        Console.WriteLine("Por favor, digite o email para enviar o resultado da comparação:");
-        string emailDestino = Console.ReadLine();
-
         // Definir o intervalo de tempo para 5 minutos (300.000 milissegundos)
         int intervalo = 6000;
 

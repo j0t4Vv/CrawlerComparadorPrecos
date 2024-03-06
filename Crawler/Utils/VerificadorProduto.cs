@@ -11,87 +11,93 @@ using Newtonsoft.Json;
 using Crawler.Compare;
 using Crawler.Models;
 
-namespace Crawler.Utils;
-
-public class VerificadorProduto
+namespace Crawler.Utils
 {
-
-    // Lista para armazenar produtos já verificados
-    static List<Produto> produtosVerificados = new List<Produto>();
-
-    // Método para verificar novos produtos
-    public static async void VerificarNovoProduto(object state)
+    public class VerificadorProduto
     {
-        string username = "11164448";
-        string senha = "60-dayfreetrial";
-        string url = "http://regymatrix-001-site1.ktempurl.com/api/v1/produto/getall";
+        // Lista para armazenar produtos já verificados
+        static List<Produto> produtosVerificados = new List<Produto>();
 
-        try
+        // Método para verificar novos produtos
+        public static async void VerificarNovoProduto(object state)
         {
-            // Criar um objeto HttpClient
-            using (HttpClient client = new HttpClient())
+            string username = "11164448";
+            string senha = "60-dayfreetrial";
+            string url = "http://regymatrix-001-site1.ktempurl.com/api/v1/produto/getall";
+
+            try
             {
-                // Adicionar as credenciais de autenticação básica
-                var byteArray = Encoding.ASCII.GetBytes($"{username}:{senha}");
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+                // Obter o endereço de e-mail do usuário
+                Console.WriteLine("Por favor, insira seu endereço de e-mail para receber as informações:");
+                string emailDestino = Console.ReadLine();
 
-                // Fazer a requisição GET à API
-                HttpResponseMessage response = await client.GetAsync(url);
-
-                // Verificar se a requisição foi bem-sucedida (código de status 200)
-                if (response.IsSuccessStatusCode)
+                // Criar um objeto HttpClient
+                using (HttpClient client = new HttpClient())
                 {
-                    // Ler o conteúdo da resposta como uma string
-                    string responseData = await response.Content.ReadAsStringAsync();
+                    // Adicionar as credenciais de autenticação básica
+                    var byteArray = Encoding.ASCII.GetBytes($"{username}:{senha}");
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
-                    // Processar os dados da resposta
-                    List<Produto> novosProdutos = ProcessarProduto.ObterNovosProdutos(responseData);
-                    foreach (Produto produto in novosProdutos)
+                    // Fazer a requisição GET à API
+                    HttpResponseMessage response = await client.GetAsync(url);
+
+                    // Verificar se a requisição foi bem-sucedida (código de status 200)
+                    if (response.IsSuccessStatusCode)
                     {
-                        if (!produtosVerificados.Exists(p => p.Id == produto.Id))
+                        // Ler o conteúdo da resposta como uma string
+                        string responseData = await response.Content.ReadAsStringAsync();
+
+                        // Processar os dados da resposta
+                        List<Produto> novosProdutos = ProcessarProduto.ObterNovosProdutos(responseData);
+                        foreach (Produto produto in novosProdutos)
                         {
-                            // Se é um novo produto, faça algo com ele
-                            Console.WriteLine($"Novo produto encontrado: ID {produto.Id}, Nome: {produto.Nome}");
-                            // Adicionar o produto à lista de produtos verificados
-                            produtosVerificados.Add(produto);
-
-                            // Registra um log no banco de dados apenas se o produto for novo
-                            if (!VerificadorRegistro.ProdutoJaRegistrado(produto.Id))
+                            if (!produtosVerificados.Exists(p => p.Id == produto.Id))
                             {
-                                RegistroLog.RegistrarLog("0000088538", "JoãoVictor", DateTime.Now, "ConsultaAPI - Verificar Produto", "Sucesso", produto.Id);
+                                // Se é um novo produto, faça algo com ele
+                                Console.WriteLine($"Novo produto encontrado: ID {produto.Id}, Nome: {produto.Nome}");
+                                // Adicionar o produto à lista de produtos verificados
+                                produtosVerificados.Add(produto);
 
-                                MercadoLivreScraper mercadoLivreScraper = new MercadoLivreScraper();
-                                var precoMercadoLivre = mercadoLivreScraper.ObterPreco(produto.Nome, produto.Id);
+                                // Registra um log no banco de dados apenas se o produto for novo
+                                if (!VerificadorRegistro.ProdutoJaRegistrado(produto.Id))
+                                {
+                                    RegistroLog.RegistrarLog("0000088538", "JoãoVictor", DateTime.Now, "ConsultaAPI - Verificar Produto", "Sucesso", produto.Id);
 
-                                MagazineLuizaScraper magazineLuizaScraper = new MagazineLuizaScraper();
-                                var precoMagazineLuiza = magazineLuizaScraper.ObterPreco(produto.Nome, produto.Id);
+                                    MercadoLivreScraper mercadoLivreScraper = new MercadoLivreScraper();
+                                    var precoMercadoLivre = mercadoLivreScraper.ObterPreco(produto.Nome, produto.Id);
 
-                                Benchmark benchmark = new Benchmark();
-                                benchmark.CompararPrecos(produto.Nome, precoMagazineLuiza, precoMercadoLivre);
+                                    MagazineLuizaScraper magazineLuizaScraper = new MagazineLuizaScraper();
+                                    var precoMagazineLuiza = magazineLuizaScraper.ObterPreco(produto.Nome, produto.Id);
 
-                                // Registrar log do benchmark
-                                RegistroLog.RegistrarLog("0000088538", "JoãoVictor", DateTime.Now, "Benchmark - Comparar Preços", "Sucesso", produto.Id);
+                                    Benchmark benchmark = new Benchmark();
 
-                                //// Enviar e-mail com os resultados da comparação
-                                //Email.EnviarEmail(produto.Nome, precoMercadoLivre, produto.Nome, precoMagazineLuiza);
+                                    // Comparar preços passando o endereço de e-mail como argumento
+                                    benchmark.CompararPrecos(produto.Nome, precoMagazineLuiza, precoMercadoLivre, emailDestino);
 
-                                // Registrar o envio do e-mail no log
-                                RegistroLog.RegistrarLog("0000088538", "JoãoVictor", DateTime.Now, "EnvioEmail", "Sucesso", produto.Id);
+                                    // Registrar log do benchmark
+                                    RegistroLog.RegistrarLog("0000088538", "JoãoVictor", DateTime.Now, "Benchmark - Comparar Preços", "Sucesso", produto.Id);
+
+                                    //// Enviar e-mail com os resultados da comparação
+                                    //Email.EnviarEmail(produto.Nome, precoMercadoLivre, produto.Nome, precoMagazineLuiza);
+
+                                    // Registrar o envio do e-mail no log
+                                    RegistroLog.RegistrarLog("0000088538", "JoãoVictor", DateTime.Now, "EnvioEmail", "Sucesso", produto.Id);
+                                }
                             }
                         }
                     }
-                }
-                else
-                {
-                    // Imprimir mensagem de erro caso a requisição falhe
-                    Console.WriteLine($"Erro: {response.StatusCode}");
+                    else
+                    {
+                        // Imprimir mensagem de erro caso a requisição falhe
+                        Console.WriteLine($"Erro: {response.StatusCode}");
+                    }
                 }
             }
-        }
-        catch (Exception ex)
-        {
-            // Imprimir mensagem de erro caso ocorra uma exceção
-            Console.WriteLine($"Erro ao fazer a requisição: {ex.Message}");
+            catch (Exception ex)
+            {
+                // Imprimir mensagem de erro caso ocorra uma exceção
+                Console.WriteLine($"Erro ao fazer a requisição: {ex.Message}");
+            }
         }
     }
 }

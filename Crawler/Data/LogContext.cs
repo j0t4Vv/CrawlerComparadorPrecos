@@ -11,7 +11,8 @@ public class LogContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseSqlServer(@"Data Source=SQL9001.site4now.net;" +
-            "Initial Catalog =db_aa5b20_apialmoxarifado_admin;" +
-            "Password=master@123"); // "ConnectionString" string de conexão
+            "Inital Catalog=db_aa5b20_apialmoxarifado_admin;" +
+            "Password=master@123"
+            );
     }
 }
