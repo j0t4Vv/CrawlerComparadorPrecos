@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -12,11 +12,13 @@ using System.ComponentModel.DataAnnotations;
 using Crawler.Utils;
 using Crawler.Send;
 
-
 class Program
 {
     static void Main(string[] args)
     {
+
+        Console.WriteLine("Por favor, digite o seu endereço de email para receber o resultado, deve ser hotmail: (Ex:example@hotmail.com) ");
+        string emailDestino = Console.ReadLine();
 
         // Definir o intervalo de tempo para 5 minutos (300.000 milissegundos)
         int intervalo = 6000;
@@ -24,8 +26,9 @@ class Program
         // Criar um temporizador que dispara a cada 5 minutos
         Timer timer = new Timer(VerificadorProduto.VerificarNovoProduto, null, 0, intervalo);
 
-        // Manter a aplicação rodando
-        Console.WriteLine("Pressione qualquer tecla para sair...");
-        Console.ReadKey();
+        // Manter a aplicação rodando até que a tecla "0" seja pressionada
+        Console.WriteLine("Pressione a tecla '0' para sair...");
+        while (Console.ReadKey().Key != ConsoleKey.D0) { }
+
     }
 }
