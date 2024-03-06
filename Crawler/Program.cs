@@ -17,9 +17,6 @@ class Program
     static void Main(string[] args)
     {
 
-        Console.WriteLine("Por favor, digite o seu endereço de email para receber o resultado, deve ser hotmail: (Ex:example@hotmail.com) ");
-        string emailDestino = Console.ReadLine();
-
         // Definir o intervalo de tempo para 5 minutos (300.000 milissegundos)
         int intervalo = 6000;
 
