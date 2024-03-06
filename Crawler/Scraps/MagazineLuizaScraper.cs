@@ -1,4 +1,4 @@
-﻿using Crawler.Scraps;
+using Crawler.Scraps;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
@@ -37,7 +37,7 @@ public class MagazineLuizaScraper
                     string firstProductUrl = urlElement.GetAttribute("href");
 
                     // Registra o log com o ID do produto
-                    RegistroLog.RegistrarLog("0000088538", "JoãoVictor", DateTime.Now, "WebScraping - Magazine Luiza", "Sucesso", idProduto);
+                    RegistroLog.RegistrarLog("8538", "JoãoVictor", DateTime.Now, "WebScraping - Magazine Luiza", "Sucesso", idProduto);
 
                     produto.Price = firstProductPrice;
                     produto.Name = firstProductName;
@@ -51,7 +51,7 @@ public class MagazineLuizaScraper
                     Console.WriteLine("Preço não encontrado.");
 
                     // Registra o log com o ID do produto
-                    RegistroLog.RegistrarLog("0000088538", "JoãoVictor", DateTime.Now, "WebScraping - Magazine Luiza", "Preço não encontrado", idProduto);
+                    RegistroLog.RegistrarLog("8538", "JoãoVictor", DateTime.Now, "WebScraping - Magazine Luiza", "Preço não encontrado", idProduto);
 
                     return null;
                 }
@@ -68,24 +68,3 @@ public class MagazineLuizaScraper
         }
     }
 }
-
-//    private static void RegistrarLog(string codRob, string usuRob, DateTime dateLog, string processo, string infLog, int idProd)
-//    {
-
-//        using (var context = new LogContext())
-//        {
-//            var log = new Log
-//            {
-//                Co = codRob,
-//                UsuRob = usuRob,
-//                DateLog = dateLog,
-//                Processo = processo,
-//                InfLog = infLog,
-//                IdProd = idProd
-//            };
-//            context.LOGROBO.Add(log);
-//            context.SaveChanges();
-//        }
-
-//    }
-//}
