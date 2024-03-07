@@ -1,13 +1,12 @@
-﻿using Crawler.Scraps;
+using Crawler.Scraps;
 using Crawler.Send;
 using System;
-using static Program;
 
 namespace Crawler.Compare
 {
     public class Benchmark
     {
-        public void CompararPrecos(string nomeProduto, ProdutoScraper precoMagazineLuiza, ProdutoScraper precoMercadoLivre, string emailDestino)
+        public void CompararPrecos(string nomeProduto, ProdutoScraper precoMagazineLuiza, ProdutoScraper precoMercadoLivre)
         {
             // Remover caracteres extras e espaços em branco
             var cleanPrecoMagazineLuiza = RemoveExtraCharacters(precoMagazineLuiza.Price);
@@ -16,7 +15,6 @@ namespace Crawler.Compare
             // Convertendo os preços para decimal
             if (decimal.TryParse(cleanPrecoMagazineLuiza, out decimal precoMagazine) && decimal.TryParse(cleanPrecoMercadoLivre, out decimal precoMercado))
             {
-
                 string MelhorCompra;
                 string UrlMelhorCompra;
 
@@ -30,7 +28,7 @@ namespace Crawler.Compare
                     Console.WriteLine("O preço no Magazine Luiza é mais barato.");
                     MelhorCompra = "Magazine Luiza";
                     UrlMelhorCompra = precoMagazineLuiza.Url;
-                    Email.EnviarEmail(emailDestino, nomeProduto, precoMercadoLivre.Price, nomeProduto, precoMagazineLuiza.Price, MelhorCompra, UrlMelhorCompra);
+                    Email.EnviarEmail(nomeProduto, precoMercadoLivre.Price, nomeProduto, precoMagazineLuiza.Price, MelhorCompra, UrlMelhorCompra, email : Program.emailInformado);
                 }
                 else if (precoMagazine > precoMercado)
                 {
@@ -41,9 +39,7 @@ namespace Crawler.Compare
                     Console.WriteLine("O preço no Mercado Livre é mais barato.");
                     MelhorCompra = "Mercado Livre";
                     UrlMelhorCompra = precoMercadoLivre.Url;
-                    Email.EnviarEmail(emailDestino, nomeProduto, precoMagazineLuiza.Price, nomeProduto, precoMercadoLivre.Price, MelhorCompra, UrlMelhorCompra);
-
-
+                    Email.EnviarEmail(nomeProduto, precoMagazineLuiza.Price, nomeProduto, precoMercadoLivre.Price, MelhorCompra, UrlMelhorCompra, email : Program.emailInformado);
                 }
                 else
                 {
@@ -61,10 +57,10 @@ namespace Crawler.Compare
         }
 
         // Método para remover caracteres extras
-        private string RemoveExtraCharacters(string price)
+        private string RemoveExtraCharacters(string Price)
         {
             // Remover "R" e "$"
-            return price.Replace("R$", "").Trim();
+            return Price.Replace("R", "").Replace("$", "").Trim();
         }
     }
 }
