@@ -1,7 +1,4 @@
 using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -16,15 +13,12 @@ namespace Crawler.Utils
 {
     public class VerificadorProduto
     {
-
         // Lista para armazenar produtos já verificados
         static List<Produto> produtosVerificados = new List<Produto>();
-
 
         // Método para verificar novos produtos
         public static async void VerificarNovoProduto(object state)
         {
-
             string username = "11164448";
             string senha = "60-dayfreetrial";
             string url = "http://regymatrix-001-site1.ktempurl.com/api/v1/produto/getall";
@@ -52,10 +46,13 @@ namespace Crawler.Utils
                         List<Produto> novosProdutos = ProcessarProduto.ObterNovosProdutos(responseData);
                         foreach (Produto produto in novosProdutos)
                         {
+
                             if (!produtosVerificados.Exists(p => p.Id == produto.Id))
                             {
+
                                 // Se é um novo produto, faça algo com ele
                                 Console.WriteLine($"Novo produto encontrado: ID {produto.Id}, Nome: {produto.Nome}");
+
                                 // Adicionar o produto à lista de produtos verificados
                                 produtosVerificados.Add(produto);
 
@@ -70,12 +67,10 @@ namespace Crawler.Utils
                                     MagazineLuizaScraper magazineLuizaScraper = new MagazineLuizaScraper();
                                     var precoMagazineLuiza = magazineLuizaScraper.ObterPreco(produto.Nome, produto.Id);
 
-                                    string emailDestino = Email.SolicitarEmailDestino();
-
                                     Benchmark benchmark = new Benchmark();
 
                                     // Comparar preços passando o endereço de e-mail como argumento
-                                    benchmark.CompararPrecos(produto.Nome, precoMagazineLuiza, precoMercadoLivre, emailDestino);
+                                    benchmark.CompararPrecos(produto.Nome, precoMagazineLuiza, precoMercadoLivre);
 
                                     // Registrar log do benchmark
                                     RegistroLog.RegistrarLog("8538", "JoãoVictor", DateTime.Now, "Benchmark - Comparar Preços", "Sucesso", produto.Id);
