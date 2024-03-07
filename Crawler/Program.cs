@@ -11,11 +11,18 @@ using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 using Crawler.Utils;
 using Crawler.Send;
+using System.Security.Cryptography.X509Certificates;
 
 class Program
 {
+
+    public static string? emailInformado;
+
     static void Main(string[] args)
     {
+
+        Console.WriteLine("Por favor, insira o endereço de email outlook para receber as informações (example@outlook.com): ");
+        emailInformado = Console.ReadLine().Trim().ToUpper();
 
         // Definir o intervalo de tempo para 5 minutos (300.000 milissegundos)
         int intervalo = 6000;
