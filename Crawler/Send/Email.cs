@@ -6,20 +6,8 @@ namespace Crawler.Send
 {
     public class Email
     {
-        public static string SolicitarEmailDestino()
+        public static void EnviarEmail(string nomeProdutoMercadoLivre, string precoProdutoMercadoLivre, string nomeProdutoMagazineLuiza, string precoProdutoMagazineLuiza, string MelhorCompra, string UrlMelhorCompra, string email)
         {
-            Console.WriteLine("Por favor, insira o endereço de email para receber o resultado: ");
-            return Console.ReadLine();
-        }
-
-        public static void EnviarEmail(string emailDestino, string nomeProdutoMercadoLivre, string precoProdutoMercadoLivre, string nomeProdutoMagazineLuiza, string precoProdutoMagazineLuiza, string MelhorCompra, string UrlMelhorCompra)
-        {
-            // Verificar se o endereço de e-mail de destino é nulo ou vazio
-            if (string.IsNullOrEmpty(emailDestino))
-            {
-                Console.WriteLine("O endereço de e-mail de destino é nulo ou vazio.");
-                return;
-            }
 
             // Configurações do servidor SMTP do Gmail
             string smtpServer = "smtp-mail.outlook.com"; // Servidor SMTP do Gmail
@@ -35,12 +23,14 @@ namespace Crawler.Send
                 client.EnableSsl = true; // Habilitar SSL/TLS
 
                 // Construir mensagem de e-mail
-                MailMessage mensagem = new MailMessage(remetente, emailDestino)
+                MailMessage mensagem = new MailMessage(remetente, Program.emailInformado)
                 {
                     Subject = "Resultado do Crawler de comparação de preços",
                     Body = $"Mercado Livre\n Produto: {nomeProdutoMercadoLivre}\n Preço: {precoProdutoMercadoLivre}\n" +
                            $"Magazine Luiza\n Produto: {nomeProdutoMagazineLuiza}\n Preço: {precoProdutoMagazineLuiza}\n" +
-                           $"Melhor Compra\n {MelhorCompra} - {UrlMelhorCompra}"
+                           $"Melhor Compra\n {MelhorCompra} - {UrlMelhorCompra}" +
+                           $"Robô 8538\n" +
+                           $"Usuário: JoãoVictor"
                 };
 
                 // Enviar e-mail
